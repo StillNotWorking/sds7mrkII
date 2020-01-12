@@ -25,12 +25,9 @@
 #include <Adafruit_MCP4725.h>
 Adafruit_MCP4725 dac;
 
-/* This optional setting causes Encoder to use more optimized code,
- * It must be defined before Encoder.h is included.              
-// #define ENCODER_OPTIMIZE_INTERRUPTS
-#define ENCODER_USE_INTERRUPTS
-#include <Encoder.h>
-Encoder wheel(0x12, 0x13); // pin 18, 19  */
+/* Rotary Encoder pins */
+#define ContactA 0x12 // pin 18
+#define ContactB 0x13 // pin 19
 
 /**************************************************\
  * REMEMEBR TO SET DEBUG TO 0 FOR PRODUCTION CODE *
@@ -41,10 +38,8 @@ Encoder wheel(0x12, 0x13); // pin 18, 19  */
     unsigned long startTime;
 #endif
 
-
 //    undefine unsigned long millis(void); 
 //  unsigned long millis(void) __attribute__((always_inline));
-
 
 // SD default chip select pin.
 const uint8_t chipSelect = SS;
@@ -58,6 +53,7 @@ volatile bool flagloadkits = false;
 uint8_t activechannel = 0x00;
 uint8_t editMode = editOFF;
 volatile bool flagcv = false; // trigger CV function from timer
+volatile uint8_t rotaryencoder = 0;
 
 /* kitdata[0] are current selected kit, rest will be loaded with nearby kits */
 volatile uint8_t kitdata[5][192] = 
@@ -135,7 +131,7 @@ volatile uint8_t kitdata[5][192] =
 };
 #include "memory.h"
 #include "debugutils.h"
-#include "wheel.h"
+#include "rotaryencoder.h"
 #include "switches.h"
 #include "midi.h"
 #include "leds.h"
@@ -171,7 +167,7 @@ void setup()
     DDRF  = 0x3F;  //              0b00111111
     PORTF = 0x00;  //              0b00000000
     initkeypad();  // set up ports for keypad
-	initwheel();
+	  initrotary();
 	
     // set timer for control voltage update speed
     cli();      // stop all interrupts        
@@ -245,5 +241,5 @@ void loop()
     if (flagcv) { cv(); };
     dokeys();
     if (flagcv) { cv(); };
-    dowheel();
+    if (checkEncoder) {};
 }

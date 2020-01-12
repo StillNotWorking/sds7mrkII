@@ -390,10 +390,10 @@ void dokeys()
                         break;
                       default: break;
                     }
-                    wheelposition = kitdata[0][(activechannel*editMode)-1];
+                    //wheelposition = kitdata[0][(activechannel*editMode)-1];
 					#if DEBUG >= 1
 						Serial.print("wheelposition write: ");
-						Serial.println(wheelposition);
+						//Serial.println(wheelposition);
 					#endif
                 }
                 
